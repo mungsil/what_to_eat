@@ -2,19 +2,26 @@
 
 오늘 먹을 메뉴를 랜덤으로 골라주는 서비스
 
-## 기술 스택
-
-- **Backend**: Spring Boot 3.5, Kotlin, Spring MVC
-- **View**: Thymeleaf
-- **DB**: MySQL + Spring Data JPA
-
----
-
 ## 핵심 기능
 
 1. **메뉴 관리** — 메뉴 등록 / 수정 / 삭제
 2. **랜덤 메뉴 추천** — 카테고리, 식사 시간 조건에 따라 랜덤 추천
 3. **추천 히스토리** — 오늘 추천받은 메뉴 기록 (반복 추천 방지 옵션)
+<table>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/2aa7ede8-5599-4037-9c23-8a7ab0ad9936" width="230"/></td>
+    <td><img src="https://github.com/user-attachments/assets/2e6b6272-1b9c-49e4-8547-406d7969d4ec" width="230"/></td>
+    <td><img src="https://github.com/user-attachments/assets/be7ee144-8f49-4115-b91b-027dad6c497d" width="230"/></td>
+  </tr>
+</table>
+
+---
+
+## 기술 스택
+
+- **Backend**: Spring Boot 3.5, Kotlin, Spring MVC
+- **View**: Thymeleaf
+- **DB**: MySQL + Spring Data JPA
 
 ---
 
