@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>오늘 뭐 먹지?</title>
+    <style>
+        body { font-family: sans-serif; max-width: 700px; margin: 40px auto; padding: 0 20px; }
+        h1 { font-size: 2rem; }
+        .meal-type-selector { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+        .meal-type-selector label { cursor: pointer; }
+        .meal-type-selector input[type="radio"] { display: none; }
+        .meal-type-btn {
+            display: inline-block; padding: 8px 20px;
+            border: 2px solid #ff6b35; border-radius: 20px;
+            color: #ff6b35; font-size: 1rem; font-weight: bold;
+            transition: all 0.15s;
+        }
+        .meal-type-selector input[type="radio"]:checked + .meal-type-btn {
+            background: #ff6b35; color: white;
+        }
+        .recommend-btn { font-size: 1.2rem; padding: 12px 0; width: 100%; background: #ff6b35; color: white; border: none; border-radius: 8px; cursor: pointer; }
+        .recommend-btn:hover { background: #e55a25; }
+        .history-area { margin-top: 32px; }
+        .meal-card { padding: 16px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 16px; }
+        .meal-type-badge { font-size: 0.85rem; font-weight: bold; color: white; background: #ff6b35; border-radius: 20px; padding: 4px 12px; white-space: nowrap; }
+        .menu-name { font-size: 1.3rem; font-weight: bold; }
+        .meta { color: #888; font-size: 0.9rem; margin-top: 2px; }
+        .no-menu-msg { color: #aaa; }
+        nav { margin-bottom: 24px; }
+        nav a { margin-right: 16px; color: #333; text-decoration: none; }
+        nav a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/">홈</a>
+        <a href="/menus">메뉴 관리</a>
+        <a href="/histories">히스토리</a>
+    </nav>
+
+    <h1>오늘 뭐 먹지? 🍽️</h1>
+
+    <form action="/recommend" method="post" id="recommendForm">
+        <div class="meal-type-selector">
+            <th:block th:each="mt : ${mealTypes}">
+                <label>
+                    <input type="radio" name="mealTypeId"
+                           th:value="${mt.id}"
+                           th:attr="data-meal-type-id=${mt.id}"
+                           th:checked="${mt.name == defaultMealTypeName}">
+                    <span class="meal-type-btn" th:text="${mt.name}"></span>
+                </label>
+            </th:block>
+        </div>
+        <button type="submit" class="recommend-btn">랜덤 추천!</button>
+    </form>
+
+    <div class="history-area" id="historyArea">
+        <!-- 이력 카드 (JS로 선택한 식사시간에 맞는 카드만 표시) -->
+        <th:block th:each="h : ${todayHistories}">
+            <div class="meal-card"
+                 th:attr="data-meal-type-id=${h.menu.mealType.id}"
+                 style="display:none;">
+                <span class="meal-type-badge" th:text="${h.menu.mealType.name}"></span>
+                <div>
+                    <div class="menu-name" th:text="${h.menu.name}"></div>
+                    <div class="meta" th:text="${h.menu.category.name}"></div>
+                </div>
+            </div>
+        </th:block>
+        <p class="no-menu-msg" id="noHistoryMsg" style="display:none;">
+            아직 추천된 메뉴가 없어요. 버튼을 눌러보세요!
+        </p>
+    </div>
+
+    <script>
+        function showHistoryForSelected() {
+            const selected = document.querySelector('input[name="mealTypeId"]:checked');
+            if (!selected) return;
+            const selectedId = selected.dataset.mealTypeId;
+
+            const cards = document.querySelectorAll('#historyArea .meal-card');
+            let found = false;
+            cards.forEach(card => {
+                if (card.dataset.mealTypeId === selectedId) {
+                    card.style.display = 'flex';
+                    found = true;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            document.getElementById('noHistoryMsg').style.display = found ? 'none' : 'block';
+        }
+
+        // 라디오 변경 시 이력 갱신
+        document.querySelectorAll('input[name="mealTypeId"]').forEach(radio => {
+            radio.addEventListener('change', showHistoryForSelected);
+        });
+
+        // 페이지 로드 시 현재 선택된 식사 시간 이력 표시
+        showHistoryForSelected();
+
+        // 메뉴 없음 알림
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('noMenu') === 'true') {
+            alert('선택한 식사 시간에 등록된 메뉴가 없어요.\n메뉴 관리에서 메뉴를 추가해 주세요!');
+            const mealTypeId = params.get('mealTypeId');
+            if (mealTypeId) {
+                const radio = document.querySelector('input[name="mealTypeId"][value="' + mealTypeId + '"]');
+                if (radio) { radio.checked = true; showHistoryForSelected(); }
+            }
+            history.replaceState(null, '', '/');
+        }
+    </script>
+</body>
+</html>

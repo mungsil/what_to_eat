@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${menu != null} ? '메뉴 수정' : '메뉴 등록'"></title>
+    <style>
+        body { font-family: sans-serif; max-width: 500px; margin: 40px auto; padding: 0 20px; }
+        nav { margin-bottom: 24px; }
+        nav a { margin-right: 16px; color: #333; text-decoration: none; }
+        nav a:hover { text-decoration: underline; }
+        .form-group { margin-bottom: 16px; }
+        label { display: block; margin-bottom: 6px; font-weight: bold; }
+        input, select { width: 100%; padding: 8px 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; box-sizing: border-box; }
+        .btn-submit { background: #ff6b35; color: white; padding: 10px 24px; border: none; border-radius: 6px; font-size: 1rem; cursor: pointer; }
+        .btn-cancel { margin-left: 12px; color: #333; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/">홈</a>
+        <a href="/menus">메뉴 관리</a>
+        <a href="/histories">히스토리</a>
+    </nav>
+
+    <h1 th:text="${menu != null} ? '메뉴 수정' : '메뉴 등록'"></h1>
+
+    <form th:action="${menu != null} ? @{/menus/{id}(id=${menu.id})} : @{/menus}" method="post">
+        <div class="form-group">
+            <label for="name">메뉴 이름</label>
+            <input type="text" id="name" name="name" th:value="${menu?.name}" required placeholder="예) 김치찌개">
+        </div>
+        <div class="form-group">
+            <label for="categoryId">카테고리</label>
+            <select id="categoryId" name="categoryId" required>
+                <option value="">선택하세요</option>
+                <option th:each="c : ${categories}"
+                        th:value="${c.id}"
+                        th:text="${c.name}"
+                        th:selected="${menu != null and menu.category.id == c.id}">
+                </option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="mealTypeId">식사 시간</label>
+            <select id="mealTypeId" name="mealTypeId" required>
+                <option value="">선택하세요</option>
+                <option th:each="m : ${mealTypes}"
+                        th:value="${m.id}"
+                        th:text="${m.name}"
+                        th:selected="${menu != null and menu.mealType.id == m.id}">
+                </option>
+            </select>
+        </div>
+        <button type="submit" class="btn-submit" th:text="${menu != null} ? '수정' : '등록'"></button>
+        <a href="/menus" class="btn-cancel">취소</a>
+    </form>
+</body>
+</html>
