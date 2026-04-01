@@ -20,7 +20,7 @@ pipeline {
             steps {
                 git branch: 'main',
                     credentialsId: 'github-credentials',
-                    url: 'https://github.com/mungsil/what-to-eat.git'
+                    url: 'https://github.com/mungsil/what_to_eat.git'
             }
         }
 
