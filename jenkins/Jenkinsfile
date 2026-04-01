@@ -32,10 +32,10 @@ pipeline {
                     passwordVariable: 'GHCR_TOKEN'
                 )]) {
                     sh '''
-                        buildah login ghcr.io -u $GHCR_USER -p $GHCR_TOKEN
-                        buildah bud -t ghcr.io/$GHCR_USER/$IMAGE_NAME:$IMAGE_TAG .
-                        buildah push ghcr.io/$GHCR_USER/$IMAGE_NAME:$IMAGE_TAG
-                        buildah rmi ghcr.io/$GHCR_USER/$IMAGE_NAME:$IMAGE_TAG                   
+                        buildah login $GHCR_REGISTRY -u $GHCR_USER -p $GHCR_TOKEN
+                        buildah bud -t $GHCR_REGISTRY/$GHCR_USER/$IMAGE_NAME:$IMAGE_TAG .
+                        buildah push $GHCR_REGISTRY/$GHCR_USER/$IMAGE_NAME:$IMAGE_TAG
+                        buildah rmi $GHCR_REGISTRY/$GHCR_USER/$IMAGE_NAME:$IMAGE_TAG                   
                     '''
                 }
             }
@@ -44,9 +44,9 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh '''
-                    kubectl set image deployment/spring-boot \
-                        spring-boot=$GHCR_REGISTRY/$GITHUB_USER/$IMAGE_NAME:$IMAGE_TAG
-                    kubectl rollout status deployment/spring-boot
+                    kubectl set image deployment/whatToEat-spring-boot \
+                        whatToEat-spring-boot=$GHCR_REGISTRY/$GITHUB_USER/$IMAGE_NAME:$IMAGE_TAG
+                    kubectl rollout status deployment/whatToEat-spring-boot
                 '''
             }
         }
