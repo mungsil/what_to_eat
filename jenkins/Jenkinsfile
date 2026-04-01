@@ -1,0 +1,63 @@
+pipeline {
+    agent any
+
+    options {
+        buildDiscarder(logRotator(
+            numToKeepStr: '10',
+            artifactNumToKeepStr: '3'
+        ))
+    }
+
+    environment {
+        GHCR_REGISTRY = 'ghcr.io'
+        GITHUB_USER = 'mungsil'
+        IMAGE_NAME = 'what-to-eat'
+        IMAGE_TAG = "${BUILD_NUMBER}"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                    credentialsId: 'github-credentials',
+                    url: 'https://github.com/mungsil/what-to-eat.git'
+            }
+        }
+
+        stage('Build and Push Image') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'github-credentials',
+                    usernameVariable: 'GHCR_USER',
+                    passwordVariable: 'GHCR_TOKEN'
+                )]) {
+                    sh '''
+                        buildah login ghcr.io -u $GHCR_USER -p $GHCR_TOKEN
+                        buildah bud -t ghcr.io/$GHCR_USER/$IMAGE_NAME:$IMAGE_TAG .
+                        buildah push ghcr.io/$GHCR_USER/$IMAGE_NAME:$IMAGE_TAG
+                        buildah rmi ghcr.io/$GHCR_USER/$IMAGE_NAME:$IMAGE_TAG                   
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh '''
+                    kubectl set image deployment/spring-boot \
+                        spring-boot=$GHCR_REGISTRY/$GITHUB_USER/$IMAGE_NAME:$IMAGE_TAG
+                    kubectl rollout status deployment/spring-boot
+                '''
+            }
+        }
+    }
+
+    post {
+        failure {
+            echo 'Pipeline failed'
+        }
+        success {
+            echo 'Pipeline successfully completed'
+        }
+    }
+}
