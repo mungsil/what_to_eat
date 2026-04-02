@@ -1,5 +1,33 @@
 pipeline {
-    agent any
+        agent {
+    kubernetes {
+        yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  hostUsers: false
+  containers:
+  - name: buildah
+    image: quay.io/buildah/stable
+    command: ['sleep', 'infinity']
+    securityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
+    volumeMounts:
+    - name: storage
+      mountPath: /storage
+    - name: storage-conf
+      mountPath: /etc/containers/
+  volumes:
+  - name: storage
+    emptyDir:
+      sizeLimit: 8Gi
+  - name: storage-conf
+    configMap:
+      name: storage-conf
+"""
+    }
+}
 
     options {
         buildDiscarder(logRotator(
@@ -26,17 +54,19 @@ pipeline {
 
         stage('Build and Push Image') {
             steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'github-credentials',
-                    usernameVariable: 'GHCR_USER',
-                    passwordVariable: 'GHCR_TOKEN'
-                )]) {
-                    sh '''
-                        buildah login $GHCR_REGISTRY -u $GHCR_USER -p $GHCR_TOKEN
-                        buildah bud -t $GHCR_REGISTRY/$GHCR_USER/$IMAGE_NAME:$IMAGE_TAG .
-                        buildah push $GHCR_REGISTRY/$GHCR_USER/$IMAGE_NAME:$IMAGE_TAG
-                        buildah rmi $GHCR_REGISTRY/$GHCR_USER/$IMAGE_NAME:$IMAGE_TAG                   
-                    '''
+                container('buildah') { 
+                    withCredentials([usernamePassword(
+                        credentialsId: 'github-credentials',
+                        usernameVariable: 'GHCR_USER',
+                        passwordVariable: 'GHCR_TOKEN'
+                    )]) {
+                        sh '''
+                            buildah login $GHCR_REGISTRY -u $GHCR_USER -p $GHCR_TOKEN
+                            buildah bud -t $GHCR_REGISTRY/$GHCR_USER/$IMAGE_NAME:$IMAGE_TAG .
+                            buildah push $GHCR_REGISTRY/$GHCR_USER/$IMAGE_NAME:$IMAGE_TAG
+                            buildah rmi $GHCR_REGISTRY/$GHCR_USER/$IMAGE_NAME:$IMAGE_TAG
+                        '''
+                    }
                 }
             }
         }
