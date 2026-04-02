@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jdk-jammy AS builder
+FROM docker.io/library/eclipse-temurin:17-jdk-jammy AS builder
 WORKDIR /app
 
 COPY gradlew .
@@ -11,7 +11,7 @@ RUN ./gradlew dependencies --no-daemon
 COPY src src
 RUN ./gradlew bootJar --no-daemon
 
-FROM eclipse-temurin:17-jre-jammy
+FROM docker.io/library/eclipse-temurin:17-jre-jammy
 WORKDIR /app
 COPY --from=builder /app/build/libs/*.jar app.jar
 
