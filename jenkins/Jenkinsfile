@@ -17,13 +17,18 @@ spec:
     volumeMounts:
     - name: storage
       mountPath: /var/lib/containers/storage
+    - name: gradle-cache
+      mountPath: /gradle-cache
   - name: kubectl
     image: bitnami/kubectl:latest
-    command: ['sleep', 'infinity']
+    command: ['sleep', 'infinity']    
   volumes:
   - name: storage
     persistentVolumeClaim:
       claimName: buildah-pvc
+  - name: gradle-cache
+    persistentVolumeClaim:
+      claimName: gradle-pvc
 """
         }
     }
