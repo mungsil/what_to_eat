@@ -1,10 +1,13 @@
 pipeline {
-        agent {
-    kubernetes {
-        yaml """
+    agent {
+        kubernetes {
+            yaml """
 apiVersion: v1
 kind: Pod
 spec:
+  serviceAccountName: jenkins-robot
+  nodeSelector:
+    kubernetes.io/hostname: k8s-worker-3
   containers:
   - name: buildah
     image: quay.io/buildah/stable
@@ -14,13 +17,16 @@ spec:
     volumeMounts:
     - name: storage
       mountPath: /var/lib/containers/storage
+  - name: kubectl
+    image: bitnami/kubectl:latest
+    command: ['sleep', 'infinity']
   volumes:
   - name: storage
     persistentVolumeClaim:
       claimName: buildah-pvc
 """
+        }
     }
-}
 
     options {
         buildDiscarder(logRotator(
@@ -47,7 +53,7 @@ spec:
 
         stage('Build and Push Image') {
             steps {
-                container('buildah') { 
+                container('buildah') {
                     withCredentials([usernamePassword(
                         credentialsId: 'github-credentials',
                         usernameVariable: 'GHCR_USER',
@@ -66,11 +72,15 @@ spec:
 
         stage('Deploy') {
             steps {
-                sh '''
-                    kubectl set image deployment/whatToEat-spring-boot \
-                        whatToEat-spring-boot=$GHCR_REGISTRY/$GITHUB_USER/$IMAGE_NAME:$IMAGE_TAG
-                    kubectl rollout status deployment/whatToEat-spring-boot
-                '''
+                container('kubectl') {
+                    withKubeConfig([]) {
+                        sh '''
+                            kubectl set image deployment/whatToEat-spring-boot \
+                                whatToEat-spring-boot=$GHCR_REGISTRY/$GITHUB_USER/$IMAGE_NAME:$IMAGE_TAG
+                            kubectl rollout status deployment/whatToEat-spring-boot
+                        '''
+                    }
+                }
             }
         }
     }
