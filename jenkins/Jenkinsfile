@@ -8,27 +8,29 @@ spec:
   serviceAccountName: jenkins-robot
   nodeSelector:
     kubernetes.io/hostname: k8s-worker-3
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+  imagePullSecrets:
+  - name: dhi-pull-secret
   containers:
   - name: buildah
     image: quay.io/buildah/stable
     command: ['sleep', 'infinity']
     securityContext:
       privileged: true
+      runAsUser: 0
+      runAsGroup: 0
     volumeMounts:
     - name: storage
       mountPath: /var/lib/containers/storage
-    - name: gradle-cache
-      mountPath: /gradle-cache
   - name: kubectl
     image: bitnami/kubectl:latest
-    command: ['sleep', 'infinity']    
+    command: ['sleep', 'infinity']
   volumes:
   - name: storage
     persistentVolumeClaim:
       claimName: buildah-pvc
-  - name: gradle-cache
-    persistentVolumeClaim:
-      claimName: gradle-pvc
 """
         }
     }
