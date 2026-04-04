@@ -82,9 +82,9 @@ spec:
                 container('kubectl') {
                     withKubeConfig([namespace: "default"]) {
                         sh '''
-                            kubectl set image deployment/whatToEat-spring-boot \
-                                whatToEat-spring-boot=$GHCR_REGISTRY/$GITHUB_USER/$IMAGE_NAME:$IMAGE_TAG
-                            kubectl rollout status deployment/whatToEat-spring-boot
+                            kubectl set image deployment/what-to-eat-spring-boot \
+                                what-to-eat-spring-boot=$GHCR_REGISTRY/$GITHUB_USER/$IMAGE_NAME:$IMAGE_TAG
+                            kubectl rollout status deployment/what-to-eat-spring-boot
                         '''
                     }
                 }
