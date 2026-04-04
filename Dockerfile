@@ -6,8 +6,6 @@ COPY gradle gradle
 RUN chmod +x gradlew
 
 COPY build.gradle settings.gradle ./
-
-ENV GRADLE_USER_HOME=/gradle-cache
 RUN ./gradlew dependencies --no-daemon
 
 COPY src src
