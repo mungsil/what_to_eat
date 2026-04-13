@@ -12,6 +12,12 @@ spec:
   imagePullSecrets:
   - name: dhi-pull-secret
   containers:
+  - name: jdk
+    image: eclipse-temurin:17-jdk
+    command: ['sleep', 'infinity']
+    volumeMounts:
+    - name: gradle-cache
+      mountPath: /home/gradle/.gradle
   - name: buildah
     image: quay.io/buildah/stable
     command: ['sleep', 'infinity']
@@ -29,6 +35,9 @@ spec:
   - name: storage
     persistentVolumeClaim:
       claimName: buildah-pvc-new
+  - name: gradle-cache
+    persistentVolumeClaim:
+      claimName: gradle-cache-pvc
 """
         }
     }
@@ -45,6 +54,7 @@ spec:
         GITHUB_USER = 'mungsil'
         IMAGE_NAME = 'what-to-eat'
         IMAGE_TAG = "${BUILD_NUMBER}"
+        GRADLE_USER_HOME = '/home/gradle/.gradle'
     }
 
     stages {
@@ -53,6 +63,17 @@ spec:
                 git branch: 'master',
                     credentialsId: 'github-credentials',
                     url: 'https://github.com/mungsil/what_to_eat.git'
+            }
+        }
+
+        stage('Gradle Build') {
+            steps {
+                container('jdk') {
+                    sh '''
+                        chmod +x ./gradlew
+                        ./gradlew clean build -x test --no-daemon
+                    '''
+                }
             }
         }
 
