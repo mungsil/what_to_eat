@@ -78,11 +78,11 @@ spec:
         stage('Deploy') {
             steps {
                 container('kubectl') {
-                    withKubeConfig([namespace: "default"]) {
+                    withKubeConfig([namespace: "what-to-eat"]) {
                         sh '''
-                            kubectl set image deployment/what-to-eat-spring-boot \
-                                what-to-eat-spring-boot=$GHCR_REGISTRY/$GITHUB_USER/$IMAGE_NAME:$IMAGE_TAG
-                            kubectl rollout status deployment/what-to-eat-spring-boot
+                            kubectl set image deployment/wte-spring \
+                                wte-spring=$GHCR_REGISTRY/$GITHUB_USER/$IMAGE_NAME:$IMAGE_TAG
+                            kubectl rollout status deployment/wte-spring
                         '''
                     }
                 }
