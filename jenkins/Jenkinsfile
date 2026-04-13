@@ -15,6 +15,9 @@ spec:
   - name: jdk
     image: eclipse-temurin:17-jdk
     command: ['sleep', 'infinity']
+    securityContext:
+      runAsUser: 0
+      runAsGroup: 0
     volumeMounts:
     - name: gradle-cache
       mountPath: /gradle-cache
@@ -71,7 +74,7 @@ spec:
                 container('jdk') {
                     sh '''
                         chmod +x ./gradlew
-                        ./gradlew clean build -x test --no-daemon
+                        ./gradlew clean build -x test --no-daemon --debug
                     '''
                 }
             }
