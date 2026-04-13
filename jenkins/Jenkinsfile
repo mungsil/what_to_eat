@@ -15,13 +15,9 @@ spec:
   - name: jdk
     image: eclipse-temurin:17-jdk
     command: ['sleep', 'infinity']
-    spec.securityContext:
-      runAsUser: 1000
-      runAsGroup: 1000
-      fsGroup: 1000
     volumeMounts:
     - name: gradle-cache
-      mountPath: /home/gradle/.gradle
+      mountPath: /gradle-cache
   - name: buildah
     image: quay.io/buildah/stable
     command: ['sleep', 'infinity']
@@ -58,7 +54,7 @@ spec:
         GITHUB_USER = 'mungsil'
         IMAGE_NAME = 'what-to-eat'
         IMAGE_TAG = "${BUILD_NUMBER}"
-        GRADLE_USER_HOME = '/home/gradle/.gradle'
+        GRADLE_USER_HOME = '/gradle-cache'
     }
 
     stages {
