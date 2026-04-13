@@ -108,14 +108,3 @@ Member ──○── Visitor ──<── RecommendHistory ──>── Menu
 | `POST` | `/menus/{id}/delete` | 메뉴 삭제                                |
 | `GET`  | `/histories`         | 추천 이력 목록                           |
 
-### REST API
-
-| Method   | URL                                             | 설명             |
-| -------- | ----------------------------------------------- | ---------------- |
-| `GET`    | `/api/menus`                                    | 전체 메뉴 조회   |
-| `POST`   | `/api/menus`                                    | 메뉴 등록        |
-| `PUT`    | `/api/menus/{id}`                               | 메뉴 수정        |
-| `DELETE` | `/api/menus/{id}`                               | 메뉴 삭제        |
-| `GET`    | `/api/menus/random`                             | 랜덤 메뉴 추천   |
-| `GET`    | `/api/menus/random?category=한식&mealType=점심` | 조건부 랜덤 추천 |
-| `GET`    | `/api/histories`                                | 추천 이력 조회   |
