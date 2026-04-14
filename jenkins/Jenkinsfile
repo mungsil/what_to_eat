@@ -89,6 +89,9 @@ spec:
                         passwordVariable: 'GHCR_TOKEN'
                     )]) {
                         sh '''
+                            # 이전 빌드 잔여물 선정리
+                            buildah rm --all || true
+
                             buildah login $GHCR_REGISTRY -u $GHCR_USER -p $GHCR_TOKEN
                             buildah bud --layers=true -t $GHCR_REGISTRY/$GHCR_USER/$IMAGE_NAME:$IMAGE_TAG .
                             buildah push $GHCR_REGISTRY/$GHCR_USER/$IMAGE_NAME:$IMAGE_TAG
@@ -115,6 +118,11 @@ spec:
     }
 
     post {
+        always {
+            container('buildah') {
+                sh 'buildah rm --all || true'
+            }
+        }
         failure {
             echo 'Pipeline failed'
         }
