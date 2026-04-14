@@ -4,12 +4,12 @@ class ResourceUsageTest {
         println("test") 
     }
 
-    fun coffee(ice : Int){
+    fun menu(num : Int){
         when {
-            ice == 1 -> println("얼음 하나")
-            ice == 2 -> println("얼음 둘")
-            ice == 3 -> println("얼음 셋") 
-            ice > 3 -> println("얼음 많이")
+            num == 1 -> println("아이스 아메리카노")
+            num == 2 -> println("아이스 바닐라 라떼에 버블 추가")
+            num == 3 -> println("따뜻한 카라멜마끼아또") 
+            num > 3 -> println("딸기 바나나 주스")
         }
     }
 }
