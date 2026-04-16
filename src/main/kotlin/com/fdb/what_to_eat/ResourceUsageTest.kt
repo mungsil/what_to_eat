@@ -7,4 +7,8 @@ class ResourceUsageTest {
     fun mock() {
         println("mock")
     }
+
+    fun inject(){
+        println("dummy")
+    }
 }
