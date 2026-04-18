@@ -100,10 +100,13 @@
         // 페이지 로드 시 현재 선택된 식사 시간 이력 표시
         showHistoryForSelected();
 
-        // 메뉴 없음 알림
+        // process params
         const params = new URLSearchParams(window.location.search);
-        if (params.get('noMenu') === 'true') {
+        const status = params.get('status');
+        if (status === 'noMenu') {
             alert('선택한 식사 시간에 등록된 메뉴가 없어요.\n메뉴 관리에서 메뉴를 추가해 주세요!');
+        } 
+        if (status === 'noMenu' || status === 'recommendSuccess') {
             const mealTypeId = params.get('mealTypeId');
             if (mealTypeId) {
                 const radio = document.querySelector('input[name="mealTypeId"][value="' + mealTypeId + '"]');
@@ -111,6 +114,7 @@
             }
             history.replaceState(null, '', '/');
         }
+
     </script>
 </body>
 </html>

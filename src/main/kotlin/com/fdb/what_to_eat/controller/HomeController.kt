@@ -45,8 +45,8 @@ class HomeController(
     ): String {
         val visitor = resolveVisitor(request, response)
         val result = recommendService.recommend(visitor, mealTypeId)
-        return if (result == null) "redirect:/?noMenu=true&mealTypeId=$mealTypeId"
-        else "redirect:/"
+        return if (result == null) "redirect:/?status=noMenu&mealTypeId=$mealTypeId"
+        else "redirect:/?status=recommendSuccess&mealTypeId=$mealTypeId"
     }
 
     private fun resolveVisitor(request: HttpServletRequest, response: HttpServletResponse) =
