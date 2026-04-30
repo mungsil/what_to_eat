@@ -34,7 +34,7 @@
 <body>
     <nav>
         <a href="/">홈</a>
-        <a href="/menus">메뉴 관리</a>
+        <a href="/menus">메뉴 목록</a>
         <a href="/histories">히스토리</a>
     </nav>
 
@@ -104,7 +104,7 @@
         const params = new URLSearchParams(window.location.search);
         const status = params.get('status');
         if (status === 'noMenu') {
-            alert('선택한 식사 시간에 등록된 메뉴가 없어요.\n메뉴 관리에서 메뉴를 추가해 주세요!');
+            alert('선택한 식사 시간에 등록된 메뉴가 없어요.');
         } 
         if (status === 'noMenu' || status === 'recommendSuccess') {
             const mealTypeId = params.get('mealTypeId');
