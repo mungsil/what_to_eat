@@ -16,6 +16,27 @@
 </table>
 
 ---
+## 🚀 Infrastructure
+
+<p align="center">
+  <img
+    width="700"
+    alt="Kubernetes Infrastructure Architecture"
+    src="https://github.com/user-attachments/assets/f10bad78-d264-46fd-a619-977a15338a60"
+  />
+</p>
+
+### Overview
+- Container runtime: containerd
+- CNI: Calico
+- CI/CD: Jenkins
+- Cloudflare Tunnel 기반 외부 트래픽 전달 구성
+
+### 자동화
+- Kubernetes cluster provisioning scripts <br/>
+  📦 Repository: https://github.com/mungsil/AnsibleScript
+
+---
 
 ## 기술 스택
 
